@@ -60,6 +60,8 @@ void MainWindow::compute_button()
     float cloud_clear_frac = kext_cld / (kext_cld+kext_clr);
     float k_null = kext_cld+kext_clr;
     int n_photon = int(1e6);
+   // if (k_null>20)
+   //     ui->kext_te_hoog
     std::cout<<sza<<" - "<<sza_rad<<std::endl;
 
     QImage domain_img(W, H, QImage::Format_ARGB32);
@@ -103,6 +105,8 @@ void MainWindow::compute_button()
         if (result[i]>cmax)
             cmax = result[i];
     }
+    if (cmax == cmin)
+        cmax = 1;
 //    for (int i=0; i<w; ++i)
 //        std::cout<<result[i]<<std::endl;
 //    std::cout<<cmin<<std::endl;
