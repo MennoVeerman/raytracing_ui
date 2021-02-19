@@ -130,7 +130,4 @@ void MainWindow::compute_button()
     //QPixmap result_pxm = QPixmap::fromImage(result_img)
     ui->results->setPixmap(QPixmap::fromImage(result_img));
 
-    //std::cout<<qRed(pixColor)<<" "<<qGreen(pixColor)<<" "<<qBlue(pixColor)<<std::endl;
-
-    domain_img.save("C:/Users/veerm010/test.png");
 }
