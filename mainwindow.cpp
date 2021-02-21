@@ -13,12 +13,20 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    #ifdef QT_OS_WIN32
+    QFont font("verdana 9 pt");
+    QApplication::setFont(font);
+    #endif
+    #ifdef QT_OS_OSX
+    QFont font("verdana 6.76 pt");
+    QApplication::setFont(font);
+    #endif
     connect(ui->add_cld, SIGNAL(clicked(bool)), this, SLOT(add_cloud_button()));
     connect(ui->rem_cld, SIGNAL(clicked(bool)), this, SLOT(rem_cloud_button()));
     connect(ui->compute, SIGNAL(clicked(bool)), this, SLOT(compute_button()));
 
     ui->zenithangle->setRange(0,90);
+
 }
 
 MainWindow::~MainWindow()
