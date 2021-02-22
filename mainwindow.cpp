@@ -13,14 +13,31 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    #ifdef QT_OS_WIN32
-    QFont font("verdana 9 pt");
+#ifdef Q_OS_WIN32
+    ui->which_os->setText("WIN32");
+    QFont font("Tahoma", 9);
     QApplication::setFont(font);
-    #endif
-    #ifdef QT_OS_OSX
-    QFont font("verdana 6.76 pt");
+#endif
+#ifdef Q_OS_MAC
+    ui->which_os->setText("MAC");
+    QFont font("Tahoma", 6.75);
     QApplication::setFont(font);
-    #endif
+#endif
+#ifdef Q_OS_MACX
+    ui->which_os->setText("MACX");
+    QFont font("Tahoma", 6.75);
+    QApplication::setFont(font);
+#endif
+#ifdef Q_OS_MAC9
+    ui->which_os->setText("MAC9");
+    QFont font("Tahoma", 6.75);
+    QApplication::setFont(font);
+#endif
+#ifdef Q_OS_OSX
+    ui->which_os->setText("OSX");
+    QFont font("Tahoma", 6.75);
+    QApplication::setFont(font);
+#endif
     connect(ui->add_cld, SIGNAL(clicked(bool)), this, SLOT(add_cloud_button()));
     connect(ui->rem_cld, SIGNAL(clicked(bool)), this, SLOT(rem_cloud_button()));
     connect(ui->compute, SIGNAL(clicked(bool)), this, SLOT(compute_button()));
@@ -67,9 +84,8 @@ void MainWindow::compute_button()
     const float kext_clr = ui->kext_clear->value();
     float cloud_clear_frac = kext_cld / (kext_cld+kext_clr);
     float k_null = kext_cld+kext_clr;
-    int n_photon = int(1e6);
-   // if (k_null>20)
-   //     ui->kext_te_hoog
+    int n_photon = int(ui->nphoton->value());
+
     std::cout<<sza<<" - "<<sza_rad<<std::endl;
 
     QImage domain_img(W, H, QImage::Format_ARGB32);
