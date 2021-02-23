@@ -34,6 +34,15 @@ void atmosphere::remove_cloud()
     child->close();//selected_cloud->close();
 }
 
+void atmosphere::remove_all_clouds()
+{
+    QList<QObject*> clouds = this->children();
+
+    for (int i=0; i<clouds.size(); ++i)
+        static_cast<QLabel*>(clouds[i])->close();
+
+}
+
 void atmosphere::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-dnditemdata")) {

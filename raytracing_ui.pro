@@ -13,6 +13,7 @@ LIBS += -fopenmp -lgomp
 
 SOURCES += \
     atmosphere.cpp \
+    grid.cpp \
     helper_functions.cpp \
     integrate.cpp \
     main.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
     atmosphere.h \
     cloud.h \
+    grid.h \
     helper_functions.h \
     integrate.h \
     mainwindow.h \

@@ -17,6 +17,7 @@ public:
     explicit atmosphere(QWidget *parent = nullptr);
     void add_cloud();
     void remove_cloud();
+    void remove_all_clouds();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;

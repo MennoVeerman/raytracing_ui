@@ -4,6 +4,7 @@
 #include "helper_functions.h"
 #include "raytracer.h"
 #include <QPainter>
+#include <QFontDatabase>
 #include <QSize>
 #include <iostream>
 #include <vector>
@@ -13,36 +14,20 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-#ifdef Q_OS_WIN32
-    ui->which_os->setText("WIN32");
-    QFont font("Tahoma", 9);
+    QFont font(QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont));
     QApplication::setFont(font);
-#endif
-#ifdef Q_OS_MAC
-    ui->which_os->setText("MAC");
-    QFont font("Tahoma", 6.75);
-    QApplication::setFont(font);
-#endif
-#ifdef Q_OS_MACX
-    ui->which_os->setText("MACX");
-    QFont font("Tahoma", 6.75);
-    QApplication::setFont(font);
-#endif
-#ifdef Q_OS_MAC9
-    ui->which_os->setText("MAC9");
-    QFont font("Tahoma", 6.75);
-    QApplication::setFont(font);
-#endif
-#ifdef Q_OS_OSX
-    ui->which_os->setText("OSX");
-    QFont font("Tahoma", 6.75);
-    QApplication::setFont(font);
-#endif
+
+    ui->zenithangle->setRange(0,89.9);
+
     connect(ui->add_cld, SIGNAL(clicked(bool)), this, SLOT(add_cloud_button()));
     connect(ui->rem_cld, SIGNAL(clicked(bool)), this, SLOT(rem_cloud_button()));
     connect(ui->compute, SIGNAL(clicked(bool)), this, SLOT(compute_button()));
+    connect(ui->reset_btn, SIGNAL(clicked(bool)), this, SLOT(initialise()));
+    connect(ui->showgrid, SIGNAL(clicked(bool)), this, SLOT(toggle_grid(bool)));
+    connect(ui->zenithangle, SIGNAL(valueChanged(double)), this, SLOT(update_grid()));
 
-    ui->zenithangle->setRange(0,90);
+    ui->gridlines->angle = ui->zenithangle->value();
+    ui->gridlines->show();
 
 }
 
@@ -59,6 +44,38 @@ void MainWindow::add_cloud_button()
 void MainWindow::rem_cloud_button()
 {
     ui->atm_frame->remove_cloud();
+}
+
+void MainWindow::initialise()
+{
+    ui->zenithangle->setValue(zenith_0);
+    ui->albedo->setValue(albedo_0);
+    ui->kext_cloud->setValue(kext_cld_0);
+    ui->kext_clear->setValue(kext_clr_0);
+    ui->ssa_cloud->setValue(ssa_cld_0);
+    ui->ssa_clear->setValue(ssa_clr_0);
+    ui->g_cloud->setValue(g_cld_0);
+    ui->nphoton->setValue(n_photon_0);
+    ui->atm_frame->remove_all_clouds();
+}
+
+void MainWindow::update_grid()
+{
+    if (ui->showgrid->isChecked())
+    {
+        ui->gridlines->angle = ui->zenithangle->value();
+        ui->gridlines->update();
+    }
+}
+void MainWindow::toggle_grid(bool checked)
+{
+    if (checked)
+    {
+        ui->gridlines->angle = ui->zenithangle->value();
+        ui->gridlines->show();
+    }
+    else
+        ui->gridlines->hide();
 }
 
 void MainWindow::compute_button()
@@ -86,6 +103,8 @@ void MainWindow::compute_button()
     float k_null = kext_cld+kext_clr;
     int n_photon = int(ui->nphoton->value());
 
+    ui->gridlines->angle = ui->zenithangle->value();
+    ui->gridlines->update();
     std::cout<<sza<<" - "<<sza_rad<<std::endl;
 
     QImage domain_img(W, H, QImage::Format_ARGB32);
