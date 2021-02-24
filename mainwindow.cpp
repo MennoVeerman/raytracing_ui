@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cmax, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
     connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(compute_paint_results()));
     connect(ui->fullrange, SIGNAL(clicked(bool)), this, SLOT(compute_clims()));
+    connect(ui->lmfao, SIGNAL(clicked(bool)), this, SLOT(lmfao(bool)));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
@@ -50,7 +52,70 @@ void MainWindow::add_cloud_button()
     ui->atm_frame->add_cloud();
 }
 
-void MainWindow::rem_cloud_button()
+
+void MainWindow::lmfao(bool checked)
+{
+    if (checked)
+    {
+        QMessageBox *test = new QMessageBox(this);
+        test->setText("Are you sure?");
+        test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        test->setStyleSheet("QLabel{min-width: 100px;}");
+        int ret = test->exec();
+        switch (ret)
+        {
+            case QMessageBox::Yes:
+            lmfao2();
+            break;
+        }
+    }
+}
+
+void MainWindow::lmfao2()
+{
+    QMessageBox *test = new QMessageBox(this);
+    test->setText("Do you really want to use an n-stream solver?");
+    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    test->setStyleSheet("QLabel{min-width: 300px;}");
+    int ret = test->exec();
+    switch (ret)
+    {
+        case QMessageBox::Yes:
+        lmfao3();
+        break;
+    }
+}
+void MainWindow::lmfao3()
+{
+    QMessageBox *test = new QMessageBox(this);
+    test->setText("It's less accurate than ray tracing!");
+    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    test->button(QMessageBox::Yes)->setText("Good point");
+    test->button(QMessageBox::No)->setText("I don't care");
+    test->setStyleSheet("QLabel{min-width: 120px;}");
+    int ret = test->exec();
+    switch (ret)
+    {
+        case QMessageBox::No:
+        lmfao4();
+        break;
+    }
+}
+void MainWindow::lmfao4()
+{
+    QMessageBox *test = new QMessageBox(this);
+    test->setText("Are you a bot perhaps?");
+    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::NoToAll);
+    test->button(QMessageBox::NoToAll)->setText("I'm a dolphin!");
+    test->setStyleSheet("QLabel{min-width: 120px;}");
+    int ret = test->exec();
+    switch (ret)
+    {
+        case QMessageBox::NoToAll:
+        lmfao(true);
+        break;
+    }
+}void MainWindow::rem_cloud_button()
 {
     ui->atm_frame->remove_cloud();
 }

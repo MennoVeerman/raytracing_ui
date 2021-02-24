@@ -27,6 +27,11 @@ public slots:
     void compute_results();
     void compute_paint_results();
     void compute_clims();
+    void lmfao(bool);
+    void lmfao2();
+    void lmfao3();
+    void lmfao4();
+
 private:
     Ui::MainWindow *ui;
     const float zenith_0 = 0.f;
