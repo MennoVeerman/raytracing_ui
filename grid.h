@@ -11,9 +11,5 @@ class grid : public QWidget
         float angle;
     protected:
         void paintEvent(QPaintEvent *event) override;
-
-
 };
-
-
 #endif // GRID_H

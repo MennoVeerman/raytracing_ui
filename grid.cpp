@@ -1,7 +1,7 @@
 #include <QtWidgets>
 #include "grid.h"
 #include <iostream>
-
+#include <cmath>
 grid::grid(QWidget *parent)
     : QWidget(parent)
 {
@@ -20,7 +20,7 @@ void grid::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QPen(Qt::gray, 1));//, Qt::line, Qt::RoundCap));
+    painter.setPen(QPen(Qt::gray, 1));
 
     float dx = ds/cos(sza);
     float ix = 0;

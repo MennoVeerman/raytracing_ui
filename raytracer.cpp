@@ -159,19 +159,20 @@ void hit_event(const int event, const int* cld_mask, const float cloud_clear_fra
 void trace_ray(const float* tau, const float* ssa, const float g, const int* cld_mask,
                const int* size, const float albedo, const float sza_rad,
                const float cloud_clear_frac, const float k_null,
-               const int n_photon, int* sfc_dir, int* sfc_dif)
+               const int n_photon, std::vector<int>& sfc_dir, std::vector<int>& sfc_dif)
 {
-    int n_threads = 8;//omp_get_max_threads();
-    int photons_per_block = int(n_photon/n_threads);
-
+    const int n_threads = 8;//omp_get_max_threads();
+    const int photons_per_block = int(n_photon/n_threads);
+    const int nx = sfc_dir.size();
+    std::cout<<nx<<std::endl;
     #pragma omp parallel for
     for (int ithread = 0; ithread < n_threads; ++ithread)
     {
         std::mt19937 mt(ithread);
         #pragma omp critical
         std::cout<<"#thread "<<ithread<<std::endl;
-        std::vector<int> sfc_dir_tmp(size[1], 0);
-        std::vector<int> sfc_dif_tmp(size[1], 0);
+        std::vector<int> sfc_dir_tmp(nx, 0);
+        std::vector<int> sfc_dif_tmp(nx, 0);
         for (int iphoton = 0; iphoton < photons_per_block; ++iphoton)
         {
             float direction[2] = {-float(cos(sza_rad)), float(sin(sza_rad))};
@@ -187,13 +188,13 @@ void trace_ray(const float* tau, const float* ssa, const float g, const int* cld
             if (position[0] <= 0)
             {
                 if (f_direct)
-                    sfc_dir_tmp[int(position[1])] += 1;
+                    sfc_dir_tmp[int(position[1]/size[1] * nx)] += 1;
                 else
-                    sfc_dif_tmp[int(position[1])] += 1;
+                    sfc_dif_tmp[int(position[1]/size[1] * nx)] += 1;
             }
         }
         #pragma omp critical
-        for (int ix = 0; ix < size[1]; ++ix)
+        for (int ix = 0; ix < nx; ++ix)
         {
             sfc_dir[ix] += sfc_dir_tmp[ix];
             sfc_dif[ix] += sfc_dif_tmp[ix];

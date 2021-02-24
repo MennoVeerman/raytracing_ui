@@ -19,7 +19,7 @@ atmosphere::atmosphere(QWidget *parent)
 void atmosphere::add_cloud()
 {
     QLabel *cloud = new QLabel(this);
-    cloud->setPixmap(QPixmap(":/images/cloud.svg"));//QPixmap::fromImage(cloud_img));//QPixmap(":/images/cloud.svg"));
+    cloud->setPixmap(QPixmap(":/images/cloud.svg"));
     cloud->move(10, 10);
     cloud->show();
     cloud->setAttribute(Qt::WA_DeleteOnClose);

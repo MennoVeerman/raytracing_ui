@@ -8,6 +8,7 @@
 #include <QSize>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -25,10 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->reset_btn, SIGNAL(clicked(bool)), this, SLOT(initialise()));
     connect(ui->showgrid, SIGNAL(clicked(bool)), this, SLOT(toggle_grid(bool)));
     connect(ui->zenithangle, SIGNAL(valueChanged(double)), this, SLOT(update_grid()));
+    connect(ui->cmin, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
+    connect(ui->cmax, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
+    connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(paint_results()));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
 
+    ui->dirdiftot->addItem(tr("Global"));
+    ui->dirdiftot->addItem(tr("Direct"));
+    ui->dirdiftot->addItem(tr("Diffuse"));
+    ui->dirdiftot->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -78,13 +86,48 @@ void MainWindow::toggle_grid(bool checked)
         ui->gridlines->hide();
 }
 
+void MainWindow::paint_results()
+{
+    if (not this->result.empty())
+    {
+        std::string ddt = ui->dirdiftot->currentText().toStdString();
+        const int w_out = W/dx;
+        if (ddt == "Global")
+            for (int iw=0; iw<w_out;  ++iw)
+                result[iw] = (sfc_dir[iw]+sfc_dif[iw])/photon_count*w_out;
+        else if (ddt == "Direct")
+            for (int iw=0; iw<w_out;  ++iw)
+                result[iw] = (sfc_dir[iw])/photon_count*w_out;
+        else if (ddt == "Diffuse")
+            for (int iw=0; iw<w_out;  ++iw)
+                result[iw] = (sfc_dif[iw])/photon_count*w_out;
+
+        // show result
+        QImage result_img(W, 10, QImage::Format_ARGB32);
+        int rgb[3];
+        float cmin = ui->cmin->value();
+        float cmax = ui->cmax->value();
+        for (int iw=0; iw<w_out; ++iw)
+        {
+            float result_norm = (result[iw]-cmin)/(cmax-cmin);
+            result_norm = std::max(0.f,std::min(1.f,result_norm));
+            get_color(result_norm, rgb);
+            const QColor clr(rgb[0], rgb[1], rgb[2]);
+            for (int i=0; i<dx; ++i)
+                for (int j=0; j<10; ++j)
+                    result_img.setPixelColor(i+iw*dx,j,clr);
+        }
+        ui->results->setPixmap(QPixmap::fromImage(result_img));
+    }
+}
 void MainWindow::compute_button()
 {
-    const int H=ui->atm_frame->size().height();
-    const int W=ui->atm_frame->size().width();
-    const int dhw = 10;
-    const int h = H/dhw;
-    const int w = W/dhw;
+    H=ui->atm_frame->size().height();
+    W=ui->atm_frame->size().width();
+    dhw = ui->inputres->value();
+    dx  = ui->outputres->value();
+    h = H/dhw;
+    w = W/dhw;
 
     // setup input arrays for raytracing
     std::vector<float> tau(w*h);
@@ -102,16 +145,15 @@ void MainWindow::compute_button()
     float cloud_clear_frac = kext_cld / (kext_cld+kext_clr);
     float k_null = kext_cld+kext_clr;
     int n_photon = int(ui->nphoton->value());
-
+    photon_count = float(n_photon);
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->update();
-    std::cout<<sza<<" - "<<sza_rad<<std::endl;
-
+    ui->dirdiftot->setCurrentIndex(0);
     QImage domain_img(W, H, QImage::Format_ARGB32);
     QPainter painter(&domain_img);
     ui->atm_frame->render(&painter);
-    // read image frame
-    //float field[h * w];
+
+
     for (int i=0; i<h; ++i)
         for (int j=0; j<w;  ++j)
         {
@@ -131,17 +173,19 @@ void MainWindow::compute_button()
             }
         }
 
+    const int w_out = int(W/dx);
+    sfc_dir.resize(w_out);
+    sfc_dif.resize(w_out);
+    std::fill(sfc_dir.begin(), sfc_dir.end(), 0);
+    std::fill(sfc_dif.begin(), sfc_dif.end(), 0);
 
-    std::vector<int> sfc_dir(w, 0.f);
-    std::vector<int> sfc_dif(w, 0.f);
-    trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data());
-    std::vector<float> result(w, 0.f);
-    for (int iw=0; iw<w;  ++iw)
-        result[iw] = (sfc_dir[iw]+sfc_dif[iw])/float(n_photon);
-    //    integrate(field, w, h, result.data());
+    trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
+    result.resize(w_out);
+    for (int iw=0; iw<w_out;  ++iw)
+        result[iw] = (sfc_dir[iw]+sfc_dif[iw])/photon_count*w_out;
     float cmin = 666.;
     float cmax = 0;
-    for (int i=0; i<w; ++i)
+    for (int i=0; i<w_out; ++i)
     {
         if (result[i]<cmin)
             cmin = result[i];
@@ -150,27 +194,8 @@ void MainWindow::compute_button()
     }
     if (cmax == cmin)
         cmax = 1;
-//    for (int i=0; i<w; ++i)
-//        std::cout<<result[i]<<std::endl;
-//    std::cout<<cmin<<std::endl;
-//    std::cout<<cmax<<std::endl;
+    ui->cmin->setValue(cmin);
+    ui->cmax->setValue(cmax);
 
-
-    // show result
-    QImage result_img(W, 10, QImage::Format_ARGB32);
-    int rgb[3];
-    for (int iw=0; iw<w; ++iw)
-    {
-        const float result_norm = (result[iw]-cmin)/(cmax-cmin);
-        get_color(result_norm, rgb);
-//        std::cout<<rgb[0]<<" "<<rgb[1]<<" "<<rgb[2]<<" "<<result_norm<<std::endl;
-        const QColor clr(rgb[0], rgb[1], rgb[2]);
-        for (int i=0; i<10; ++i)
-            for (int j=0; j<10; ++j)
-                result_img.setPixelColor(i+iw*10,j,clr);
-       // std::cout<<result[i]<<std::endl;
-    }
-    //QPixmap result_pxm = QPixmap::fromImage(result_img)
-    ui->results->setPixmap(QPixmap::fromImage(result_img));
-
+    paint_results();
 }
