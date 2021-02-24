@@ -28,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->zenithangle, SIGNAL(valueChanged(double)), this, SLOT(update_grid()));
     connect(ui->cmin, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
     connect(ui->cmax, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
-    connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(paint_results()));
+    connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(compute_paint_results()));
+    connect(ui->fullrange, SIGNAL(clicked(bool)), this, SLOT(compute_clims()));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
@@ -85,8 +86,13 @@ void MainWindow::toggle_grid(bool checked)
     else
         ui->gridlines->hide();
 }
+void MainWindow::compute_paint_results()
+{
+    compute_results();
+    paint_results();
+}
 
-void MainWindow::paint_results()
+void MainWindow::compute_results()
 {
     if (not this->result.empty())
     {
@@ -101,7 +107,14 @@ void MainWindow::paint_results()
         else if (ddt == "Diffuse")
             for (int iw=0; iw<w_out;  ++iw)
                 result[iw] = (sfc_dif[iw])/photon_count*w_out;
+    }
+}
 
+void MainWindow::paint_results()
+{
+    if (not this->result.empty())
+    {
+        const int w_out = W/dx;
         // show result
         QImage result_img(W, 10, QImage::Format_ARGB32);
         int rgb[3];
@@ -120,6 +133,25 @@ void MainWindow::paint_results()
         ui->results->setPixmap(QPixmap::fromImage(result_img));
     }
 }
+
+void MainWindow::compute_clims()
+{
+    const int w_out = W/dx;
+    float cmin = 666.;
+    float cmax = 0;
+    for (int i=0; i<w_out; ++i)
+    {
+        if (result[i]<cmin)
+            cmin = result[i];
+        if (result[i]>cmax)
+            cmax = result[i];
+    }
+    if (cmax == cmin)
+        cmax = 1;
+    ui->cmin->setValue(cmin);
+    ui->cmax->setValue(cmax);
+}
+
 void MainWindow::compute_button()
 {
     H=ui->atm_frame->size().height();
@@ -153,7 +185,6 @@ void MainWindow::compute_button()
     QPainter painter(&domain_img);
     ui->atm_frame->render(&painter);
 
-
     for (int i=0; i<h; ++i)
         for (int j=0; j<w;  ++j)
         {
@@ -181,21 +212,8 @@ void MainWindow::compute_button()
 
     trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
     result.resize(w_out);
-    for (int iw=0; iw<w_out;  ++iw)
-        result[iw] = (sfc_dir[iw]+sfc_dif[iw])/photon_count*w_out;
-    float cmin = 666.;
-    float cmax = 0;
-    for (int i=0; i<w_out; ++i)
-    {
-        if (result[i]<cmin)
-            cmin = result[i];
-        if (result[i]>cmax)
-            cmax = result[i];
-    }
-    if (cmax == cmin)
-        cmax = 1;
-    ui->cmin->setValue(cmin);
-    ui->cmax->setValue(cmax);
+    compute_results();
+    compute_clims();
 
     paint_results();
 }

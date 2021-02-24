@@ -24,7 +24,9 @@ public slots:
     void update_grid();
     void compute_button();
     void paint_results();
-
+    void compute_results();
+    void compute_paint_results();
+    void compute_clims();
 private:
     Ui::MainWindow *ui;
     const float zenith_0 = 0.f;
