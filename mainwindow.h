@@ -31,6 +31,7 @@ public slots:
     void lmfao2();
     void lmfao3();
     void lmfao4();
+    void move_button();
 
 private:
     Ui::MainWindow *ui;

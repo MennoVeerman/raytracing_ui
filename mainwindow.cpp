@@ -31,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cmax, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
     connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(compute_paint_results()));
     connect(ui->fullrange, SIGNAL(clicked(bool)), this, SLOT(compute_clims()));
-    connect(ui->lmfao, SIGNAL(clicked(bool)), this, SLOT(lmfao(bool)));
+    //connect(ui->lmfao, SIGNAL(clicked(bool)), this, SLOT(lmfao(bool)));
+    //connect(ui->lmfao, SIGNAL(underMouse()), this, SLOT(lmfao()));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->dirdiftot->setCurrentIndex(0);
 }
 
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -51,7 +53,11 @@ void MainWindow::add_cloud_button()
 {
     ui->atm_frame->add_cloud();
 }
-
+void MainWindow::move_button()
+{
+    std::cout<<ui->lmfaob->pos().x()<<std::endl;
+    std::cout<<ui->lmfaob->pos().y()<<std::endl;
+}
 
 void MainWindow::lmfao(bool checked)
 {
@@ -70,7 +76,6 @@ void MainWindow::lmfao(bool checked)
         }
     }
 }
-
 void MainWindow::lmfao2()
 {
     QMessageBox *test = new QMessageBox(this);
@@ -92,7 +97,7 @@ void MainWindow::lmfao3()
     test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     test->button(QMessageBox::Yes)->setText("Good point");
     test->button(QMessageBox::No)->setText("I don't care");
-    test->setStyleSheet("QLabel{min-width: 120px;}");
+    test->setStyleSheet("QLabel{min-width: 200px;}");
     int ret = test->exec();
     switch (ret)
     {

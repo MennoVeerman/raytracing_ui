@@ -16,6 +16,7 @@ SOURCES += \
     grid.cpp \
     helper_functions.cpp \
     integrate.cpp \
+    lmfao.cpp \
     main.cpp \
     mainwindow.cpp \
     raytracer.cpp
@@ -26,6 +27,7 @@ HEADERS += \
     grid.h \
     helper_functions.h \
     integrate.h \
+    lmfao.h \
     mainwindow.h \
     raytracer.h
 
