@@ -33,8 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->ln_global, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
     connect(ui->ln_direct, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
     connect(ui->ln_diffuse, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
-    //connect(ui->lmfao, SIGNAL(clicked(bool)), this, SLOT(lmfao(bool)));
-    //connect(ui->lmfao, SIGNAL(underMouse()), this, SLOT(lmfao()));
+    //connect(ui->streams, SIGNAL(clicked(bool)), this, SLOT(streams(bool)));
+    //connect(ui->streams, SIGNAL(underMouse()), this, SLOT(streams()));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
@@ -62,11 +62,11 @@ void MainWindow::add_cloud_button()
 }
 void MainWindow::move_button()
 {
-    std::cout<<ui->lmfaob->pos().x()<<std::endl;
-    std::cout<<ui->lmfaob->pos().y()<<std::endl;
+    std::cout<<ui->streams->pos().x()<<std::endl;
+    std::cout<<ui->streams->pos().y()<<std::endl;
 }
 
-void MainWindow::lmfao(bool checked)
+void MainWindow::streams(bool checked)
 {
     if (checked)
     {
@@ -78,12 +78,12 @@ void MainWindow::lmfao(bool checked)
         switch (ret)
         {
             case QMessageBox::Yes:
-            lmfao2();
+            streams2();
             break;
         }
     }
 }
-void MainWindow::lmfao2()
+void MainWindow::streams2()
 {
     QMessageBox *test = new QMessageBox(this);
     test->setText("Do you really want to use an n-stream solver?");
@@ -93,11 +93,11 @@ void MainWindow::lmfao2()
     switch (ret)
     {
         case QMessageBox::Yes:
-        lmfao3();
+        streams3();
         break;
     }
 }
-void MainWindow::lmfao3()
+void MainWindow::streams3()
 {
     QMessageBox *test = new QMessageBox(this);
     test->setText("It's less accurate than ray tracing!");
@@ -109,11 +109,11 @@ void MainWindow::lmfao3()
     switch (ret)
     {
         case QMessageBox::No:
-        lmfao4();
+        streams4();
         break;
     }
 }
-void MainWindow::lmfao4()
+void MainWindow::streams4()
 {
     QMessageBox *test = new QMessageBox(this);
     test->setText("Are you a bot perhaps?");
@@ -124,7 +124,7 @@ void MainWindow::lmfao4()
     switch (ret)
     {
         case QMessageBox::NoToAll:
-        lmfao(true);
+        streams(true);
         break;
     }
 }void MainWindow::rem_cloud_button()

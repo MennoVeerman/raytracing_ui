@@ -28,10 +28,10 @@ public slots:
     void compute_results();
     void compute_paint_results();
     void compute_clims();
-    void lmfao(bool);
-    void lmfao2();
-    void lmfao3();
-    void lmfao4();
+    void streams(bool);
+    void streams2();
+    void streams3();
+    void streams4();
     void move_button();
 
 private:

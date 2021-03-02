@@ -1,14 +1,14 @@
-#include "lmfao.h"
+#include "streambox.h"
 #include <iostream>
 #include <QHoverEvent>
 #include <stdlib.h>
-lmfao::lmfao(QWidget *parent)
+streambox::streambox(QWidget *parent)
     : QCheckBox(parent)
 {
     this->setAttribute(Qt::WA_Hover, true);
 }
 
-void lmfao::mousePressEvent(QMouseEvent *event)
+void streambox::mousePressEvent(QMouseEvent *event)
 {
     int xn = rand()/float(RAND_MAX) * 800;
     int yn = rand()/float(RAND_MAX) * 500;

@@ -894,7 +894,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="lmfao" name="lmfaob">
+   <widget class="streambox" name="streams">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -1048,11 +1048,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>lmfao</class>
-   <extends>QCheckBox</extends>
-   <header>lmfao.h</header>
-  </customwidget>
-  <customwidget>
    <class>plotarea</class>
    <extends>QWidget</extends>
    <header>plotarea.h</header>
@@ -1062,6 +1057,11 @@
    <class>checkbox_line</class>
    <extends>QCheckBox</extends>
    <header>plotarea.h</header>
+  </customwidget>
+  <customwidget>
+   <class>streambox</class>
+   <extends>QCheckBox</extends>
+   <header>streambox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

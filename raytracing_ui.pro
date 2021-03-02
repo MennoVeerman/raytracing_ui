@@ -15,21 +15,21 @@ SOURCES += \
     atmosphere.cpp \
     grid.cpp \
     helper_functions.cpp \
-    lmfao.cpp \
     main.cpp \
     mainwindow.cpp \
     plotarea.cpp \
-    raytracer.cpp
+    raytracer.cpp \
+    streambox.cpp
 
 HEADERS += \
     atmosphere.h \
     cloud.h \
     grid.h \
     helper_functions.h \
-    lmfao.h \
     mainwindow.h \
     plotarea.h \
-    raytracer.h
+    raytracer.h \
+    streambox.h
 
 FORMS += \
     mainwindow.ui
