@@ -9,7 +9,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <limits>
-#include <omp.h>
 
 double get_wall_time(){
     struct timeval time;
