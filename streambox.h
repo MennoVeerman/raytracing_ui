@@ -8,7 +8,7 @@ class streambox : public QCheckBox
     public:
         explicit streambox(QWidget *parent = nullptr);
     protected:
-        void enterEvent(QEvent *event) ;
+        //virtual void enterEvent(QMouseEvent *event) ;
         void mousePressEvent(QMouseEvent *event);
 
 };
