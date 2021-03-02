@@ -13,7 +13,5 @@ void lmfao::mousePressEvent(QMouseEvent *event)
     int xn = rand()/float(RAND_MAX) * 800;
     int yn = rand()/float(RAND_MAX) * 500;
     this->move(xn,yn);
-//    this->move(xn-x,yn-y);
-    std::cout<<xn<<" "<<yn  <<std::endl;
 
 }

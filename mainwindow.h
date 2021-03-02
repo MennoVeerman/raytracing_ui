@@ -24,6 +24,7 @@ public slots:
     void update_grid();
     void compute_button();
     void paint_results();
+    void paint_lines();
     void compute_results();
     void compute_paint_results();
     void compute_clims();
@@ -45,9 +46,13 @@ private:
     const int n_photon_0 = 1000000;
 
     float photon_count;
-    std::vector<float> result;
+    std::vector<float> res_global;
+    std::vector<float> res_direct;
+    std::vector<float> res_diffuse;
+    float* result_cur;
     std::vector<int> sfc_dir;
     std::vector<int> sfc_dif;
+
     int w;
     int W;
     int h;

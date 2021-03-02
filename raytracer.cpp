@@ -164,7 +164,6 @@ void trace_ray(const float* tau, const float* ssa, const float g, const int* cld
     const int n_threads = 8;//omp_get_max_threads();
     const int photons_per_block = int(n_photon/n_threads);
     const int nx = sfc_dir.size();
-    std::cout<<nx<<std::endl;
     #pragma omp parallel for
     for (int ithread = 0; ithread < n_threads; ++ithread)
     {

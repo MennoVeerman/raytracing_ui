@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "integrate.h"
 #include "helper_functions.h"
 #include "raytracer.h"
 #include <QPainter>
@@ -31,16 +30,24 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->cmax, SIGNAL(valueChanged(double)), this, SLOT(paint_results()));
     connect(ui->dirdiftot, SIGNAL(currentTextChanged(QString)), this, SLOT(compute_paint_results()));
     connect(ui->fullrange, SIGNAL(clicked(bool)), this, SLOT(compute_clims()));
+    connect(ui->ln_global, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
+    connect(ui->ln_direct, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
+    connect(ui->ln_diffuse, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
     //connect(ui->lmfao, SIGNAL(clicked(bool)), this, SLOT(lmfao(bool)));
     //connect(ui->lmfao, SIGNAL(underMouse()), this, SLOT(lmfao()));
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
+    ui->lineplots->show();
 
     ui->dirdiftot->addItem(tr("Global"));
     ui->dirdiftot->addItem(tr("Direct"));
     ui->dirdiftot->addItem(tr("Diffuse"));
     ui->dirdiftot->setCurrentIndex(0);
+
+    ui->ln_global->linecolor  = Qt::black;
+    ui->ln_direct->linecolor  = QColor(69,106,216);
+    ui->ln_diffuse->linecolor = QColor(242,212,62);
 }
 
 
@@ -156,33 +163,49 @@ void MainWindow::toggle_grid(bool checked)
     else
         ui->gridlines->hide();
 }
+
+void MainWindow::paint_lines()
+{
+    if (not this->res_global.empty())
+    {
+        ui->lineplots->do_global  = ui->ln_global->isChecked();
+        ui->lineplots->do_direct  = ui->ln_direct->isChecked();
+        ui->lineplots->do_diffuse = ui->ln_diffuse->isChecked();
+
+        ui->lineplots->update();
+    }
+}
+
 void MainWindow::compute_paint_results()
 {
-    compute_results();
+    std::string ddt = ui->dirdiftot->currentText().toStdString();
+    if (ddt == "Global")
+        result_cur = res_global.data();
+    else if (ddt == "Direct")
+        result_cur = res_direct.data();
+    else if (ddt == "Diffuse")
+        result_cur = res_diffuse.data();
+
     paint_results();
 }
 
 void MainWindow::compute_results()
 {
-    if (not this->result.empty())
+    if (not this->res_global.empty())
     {
-        std::string ddt = ui->dirdiftot->currentText().toStdString();
         const int w_out = W/dx;
-        if (ddt == "Global")
-            for (int iw=0; iw<w_out;  ++iw)
-                result[iw] = (sfc_dir[iw]+sfc_dif[iw])/photon_count*w_out;
-        else if (ddt == "Direct")
-            for (int iw=0; iw<w_out;  ++iw)
-                result[iw] = (sfc_dir[iw])/photon_count*w_out;
-        else if (ddt == "Diffuse")
-            for (int iw=0; iw<w_out;  ++iw)
-                result[iw] = (sfc_dif[iw])/photon_count*w_out;
+        for (int iw=0; iw<w_out;  ++iw)
+        {
+            res_global[iw] = (sfc_dir[iw]+sfc_dif[iw])/photon_count*w_out;
+            res_direct[iw] = (sfc_dir[iw])/photon_count*w_out;
+            res_diffuse[iw] = (sfc_dif[iw])/photon_count*w_out;
+        }
     }
 }
 
 void MainWindow::paint_results()
 {
-    if (not this->result.empty())
+    if (not this->res_global.empty())
     {
         const int w_out = W/dx;
         // show result
@@ -192,7 +215,7 @@ void MainWindow::paint_results()
         float cmax = ui->cmax->value();
         for (int iw=0; iw<w_out; ++iw)
         {
-            float result_norm = (result[iw]-cmin)/(cmax-cmin);
+            float result_norm = (result_cur[iw]-cmin)/(cmax-cmin);
             result_norm = std::max(0.f,std::min(1.f,result_norm));
             get_color(result_norm, rgb);
             const QColor clr(rgb[0], rgb[1], rgb[2]);
@@ -211,10 +234,10 @@ void MainWindow::compute_clims()
     float cmax = 0;
     for (int i=0; i<w_out; ++i)
     {
-        if (result[i]<cmin)
-            cmin = result[i];
-        if (result[i]>cmax)
-            cmax = result[i];
+        if (result_cur[i]<cmin)
+            cmin = result_cur[i];
+        if (result_cur[i]>cmax)
+            cmax = result_cur[i];
     }
     if (cmax == cmin)
         cmax = 1;
@@ -251,6 +274,7 @@ void MainWindow::compute_button()
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->update();
     ui->dirdiftot->setCurrentIndex(0);
+
     QImage domain_img(W, H, QImage::Format_ARGB32);
     QPainter painter(&domain_img);
     ui->atm_frame->render(&painter);
@@ -281,9 +305,23 @@ void MainWindow::compute_button()
     std::fill(sfc_dif.begin(), sfc_dif.end(), 0);
 
     trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
-    result.resize(w_out);
+    res_global.resize(w_out);
+    res_diffuse.resize(w_out);
+    res_direct.resize(w_out);
+    result_cur = res_global.data();
+
+    ui->lineplots->global = res_global.data();
+    ui->lineplots->direct = res_direct.data();
+    ui->lineplots->diffuse = res_diffuse.data();
+    ui->lineplots->nx = res_global.size();
+    ui->lineplots->dx = dx;
+    ui->ln_global->setChecked(1);
+    ui->ln_direct->setChecked(1);
+    ui->ln_diffuse->setChecked(1);
+
     compute_results();
     compute_clims();
 
     paint_results();
+    paint_lines();
 }
