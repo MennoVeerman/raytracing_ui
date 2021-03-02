@@ -279,6 +279,7 @@ void MainWindow::compute_button()
     QPainter painter(&domain_img);
     ui->atm_frame->render(&painter);
 
+    const float tau_scale = dhw/10.f;
     for (int i=0; i<h; ++i)
         for (int j=0; j<w;  ++j)
         {
@@ -286,13 +287,13 @@ void MainWindow::compute_button()
             QRgb pixColor = domain_img.pixel(dhw*j,dhw*i);
             if (qRed(pixColor) != qBlue(pixColor))
             {
-                tau[idx] = kext_clr; // clear sky pixel
+                tau[idx] = kext_clr * tau_scale; // clear sky pixel
                 ssa[idx] = ssa_clr;
                 cld_mask[idx] = 0;
             }
             else
             {
-                tau[idx] = kext_cld; //cloudy pixel
+                tau[idx] = kext_cld * tau_scale; //cloudy pixel
                 ssa[idx] = ssa_cld;
                 cld_mask[idx] = 1;
             }
