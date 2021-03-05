@@ -33,6 +33,7 @@ public slots:
     void streams3();
     void streams4();
     void move_button();
+//    void compute_main();
 
 private:
     Ui::MainWindow *ui;

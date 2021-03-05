@@ -2,5 +2,6 @@
     <qresource prefix="/images">
         <file>cloud.png</file>
         <file>cloud.svg</file>
+        <file>cloud_icon.svg</file>
     </qresource>
 </RCC>

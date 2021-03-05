@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Ray Tracing</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="add_cld">
@@ -91,6 +91,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Solar zenith angle</string>
+    </property>
     <property name="decimals">
      <number>1</number>
     </property>
@@ -106,6 +109,9 @@
       <width>61</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Solar zenith angle</string>
     </property>
     <property name="text">
      <string>SZA</string>
@@ -165,6 +171,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Gaseous extinction coefficient</string>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:10pt; vertical-align:sub;&quot;&gt;ext&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;- cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -180,6 +189,9 @@
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Cloud Single Scattering Albedo</string>
     </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;SSA - cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -202,6 +214,9 @@
       <family>Verdana</family>
      </font>
     </property>
+    <property name="toolTip">
+     <string>Gaseous extinction coefficient</string>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:10pt; vertical-align:sub;&quot;&gt;ext&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;/&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;- clear&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -221,6 +236,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Gaseous Single Scattering Albedo</string>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;SSA - clear&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -239,6 +257,9 @@
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Gaseous extinction coefficient</string>
     </property>
     <property name="prefix">
      <string/>
@@ -265,6 +286,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Cloud Single Scattering Albedo</string>
+    </property>
     <property name="decimals">
      <number>2</number>
     </property>
@@ -287,6 +311,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Gaseous extinction coefficient</string>
+    </property>
     <property name="decimals">
      <number>4</number>
     </property>
@@ -305,6 +332,9 @@
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Gaseous Single Scattering Albedo</string>
     </property>
     <property name="decimals">
      <number>1</number>
@@ -328,6 +358,9 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Asymmetry parameter</string>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;g - cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -343,6 +376,9 @@
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Asymmetry parameter</string>
     </property>
     <property name="decimals">
      <number>2</number>
@@ -383,42 +419,32 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>277</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;photon count&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="textFormat">
-     <enum>Qt::RichText</enum>
-    </property>
-   </widget>
    <widget class="QDoubleSpinBox" name="nphoton">
     <property name="geometry">
      <rect>
       <x>100</x>
       <y>300</y>
-      <width>81</width>
+      <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Number of photons</string>
     </property>
     <property name="decimals">
      <number>0</number>
     </property>
+    <property name="minimum">
+     <double>0.000000000000000</double>
+    </property>
     <property name="maximum">
-     <double>1000000000.000000000000000</double>
+     <double>10000000.000000000000000</double>
     </property>
     <property name="singleStep">
-     <double>100000.000000000000000</double>
+     <double>1.000000000000000</double>
     </property>
     <property name="value">
-     <double>1000000.000000000000000</double>
+     <double>10.000000000000000</double>
     </property>
    </widget>
    <widget class="Line" name="line_6">
@@ -1033,6 +1059,41 @@
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="label_17">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>280</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Number of photons</string>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;N&lt;span style=&quot; vertical-align:sub;&quot;&gt;phot&lt;/span&gt; x 100,000&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::MarkdownText</enum>
+    </property>
+   </widget>
+   <widget class="Cloudmenu" name="menu">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>470</y>
+      <width>51</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1074,6 +1135,12 @@
    <class>streambox</class>
    <extends>QCheckBox</extends>
    <header>streambox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Cloudmenu</class>
+   <extends>QFrame</extends>
+   <header>cloudmenu.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

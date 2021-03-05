@@ -1,3 +1,7 @@
+#include <chrono>
+#include <Windows.h>
+#include <cstdlib>
+#include <unistd.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "helper_functions.h"
@@ -9,6 +13,8 @@
 #include <vector>
 #include <cmath>
 #include <QMessageBox>
+#include <thread>
+#include <compute.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     QApplication::setFont(font);
 
     ui->zenithangle->setRange(0,89.9);
+    Compute* thr = new Compute();
 
     connect(ui->add_cld, SIGNAL(clicked(bool)), this, SLOT(add_cloud_button()));
     connect(ui->rem_cld, SIGNAL(clicked(bool)), this, SLOT(rem_cloud_button()));
@@ -35,6 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->ln_diffuse, SIGNAL(clicked(bool)), this, SLOT(paint_lines()));
     //connect(ui->streams, SIGNAL(clicked(bool)), this, SLOT(streams(bool)));
     //connect(ui->streams, SIGNAL(underMouse()), this, SLOT(streams()));
+
+//    connect(ui->thread, SIGNAL(clicked(bool)), thr, SLOT(start()));
+//    connect(thr, SIGNAL(lets_paint()), this, SLOT(streams2()));
+
 
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->show();
@@ -85,17 +96,19 @@ void MainWindow::streams(bool checked)
 }
 void MainWindow::streams2()
 {
-    QMessageBox *test = new QMessageBox(this);
-    test->setText("Do you really want to use an n-stream solver?");
-    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    test->setStyleSheet("QLabel{min-width: 300px;}");
-    int ret = test->exec();
-    switch (ret)
-    {
-        case QMessageBox::Yes:
-        streams3();
-        break;
-    }
+    std::cout<<"---"<<std::endl;
+    ui->albedo->setValue(0.5);
+    //    QMessageBox *test = new QMessageBox(this);
+//    test->setText("Do you really want to use an n-stream solver?");
+//    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//    test->setStyleSheet("QLabel{min-width: 300px;}");
+//    int ret = test->exec();
+//    switch (ret)
+//    {
+//        case QMessageBox::Yes:
+//        streams3();
+//        break;
+//    }
 }
 void MainWindow::streams3()
 {
@@ -245,8 +258,10 @@ void MainWindow::compute_clims()
     ui->cmax->setValue(cmax);
 }
 
+
 void MainWindow::compute_button()
 {
+    std::cout<<"XXXXXXX"<<std::endl;
     H=ui->atm_frame->size().height();
     W=ui->atm_frame->size().width();
     dhw = ui->inputres->value();
@@ -269,7 +284,7 @@ void MainWindow::compute_button()
     const float kext_clr = ui->kext_clear->value();
     float cloud_clear_frac = kext_cld / (kext_cld+kext_clr);
     float k_null = kext_cld+kext_clr;
-    int n_photon = int(ui->nphoton->value());
+    int n_photon = int(ui->nphoton->value()*100000);
     photon_count = float(n_photon);
     ui->gridlines->angle = ui->zenithangle->value();
     ui->gridlines->update();
@@ -304,8 +319,11 @@ void MainWindow::compute_button()
     sfc_dif.resize(w_out);
     std::fill(sfc_dir.begin(), sfc_dir.end(), 0);
     std::fill(sfc_dif.begin(), sfc_dif.end(), 0);
-
-    trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
+    std::cout<<"XXXXXXX"<<std::endl;
+//trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
+//    std::thread run_raytracing(trace_ray,tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
+    trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
+//    run_raytracing.join();
     res_global.resize(w_out);
     res_diffuse.resize(w_out);
     res_direct.resize(w_out);

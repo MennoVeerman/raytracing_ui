@@ -1,6 +1,7 @@
 #include <QtWidgets>
 #include <iostream>
 #include "atmosphere.h"
+#include "cloud.h"
 
 //! [0]
 atmosphere::atmosphere(QWidget *parent)
@@ -19,6 +20,7 @@ atmosphere::atmosphere(QWidget *parent)
 void atmosphere::add_cloud()
 {
     QLabel *cloud = new QLabel(this);
+    //cloud->
     cloud->setPixmap(QPixmap(":/images/cloud.svg"));
     cloud->move(10, 10);
     cloud->show();
@@ -82,12 +84,20 @@ void atmosphere::dropEvent(QDropEvent *event)
         QPoint offset;
         dataStream >> pixmap >> offset;
 
-        QLabel *newIcon = new QLabel(this);
-        newIcon->setPixmap(pixmap);
+        Cloud *newIcon = new Cloud(this);
+        std::cout<<newIcon->width()<<"  "<<newIcon->height()<<std::endl;
+        newIcon->update_image(QString("cloud"));
+       //
+
         newIcon->move(event->position().toPoint() - offset);
         newIcon->show();
         newIcon->setAttribute(Qt::WA_DeleteOnClose);
         newIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
+
+//        dataStream >> pixmap >> offset;
+//        newIcon->setPixmap(pixmap.scaled(100,100,Qt::KeepAspectRatio));
+//        newIcon->move(event->position().toPoint() - offset);
+//        newIcon->show();
 
         if (event->source() == this) {
             event->setDropAction(Qt::MoveAction);

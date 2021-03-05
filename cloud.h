@@ -2,19 +2,18 @@
 #define CLOUD_H
 
 #include <QLabel>
+#include <string>
 
-QT_BEGIN_NAMESPACE
-class QDragEnterEvent;
-class QDropEvent;
-QT_END_NAMESPACE
-
-//! [0]
-class cloud : public QLabel
+class Cloud : public QLabel
 {
 public:
-    explicit cloud(QWidget *parent = nullptr);
+    explicit Cloud(QWidget *parent = nullptr);
+    void set_icon(std::string obj_type);
+    void update_image(QString name);
+
+    QString name;
+//private:
 
 };
-//! [0]
 
 #endif // CLOUD_H

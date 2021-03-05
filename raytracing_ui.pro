@@ -14,6 +14,9 @@ win32{
 
 SOURCES += \
     atmosphere.cpp \
+    cloud.cpp \
+    cloudmenu.cpp \
+    compute.cpp \
     grid.cpp \
     helper_functions.cpp \
     main.cpp \
@@ -25,6 +28,8 @@ SOURCES += \
 HEADERS += \
     atmosphere.h \
     cloud.h \
+    cloudmenu.h \
+    compute.h \
     grid.h \
     helper_functions.h \
     mainwindow.h \
