@@ -64,9 +64,11 @@ void atmosphere::keyPressEvent(QKeyEvent *event)
 
 void atmosphere::wheelEvent(QWheelEvent *event)
 {
+    QPoint mouse = QWidget::mapFromGlobal(QCursor::pos());
     const int spin = event->angleDelta().y();
     std::cout<<"spin: "<<spin<<std::endl;
-    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+    Cloud *child = static_cast<Cloud*>(childAt(mouse));
+
     if (!child)
         return;
     const int width_cur = child->width;
