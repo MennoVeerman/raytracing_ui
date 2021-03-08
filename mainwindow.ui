@@ -68,10 +68,10 @@
    <widget class="QPushButton" name="compute">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>6</y>
-      <width>55</width>
-      <height>55</height>
+      <x>145</x>
+      <y>20</y>
+      <width>41</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -1093,10 +1093,10 @@
    <widget class="Cloudmenu" name="menu">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>0</x>
       <y>20</y>
-      <width>101</width>
-      <height>31</height>
+      <width>131</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="frameShape">

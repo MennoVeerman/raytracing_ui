@@ -10,12 +10,34 @@ Cloudmenu::Cloudmenu(QWidget *parent)
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
     setAcceptDrops(true);
 
+    Cloud *cloudcb = new Cloud(this);
+    cloudcb->set_icon("cumulonimbus");
+    cloudcb->move(1,6);
+    cloudcb->show();
+    cloudcb->setAttribute(Qt::WA_DeleteOnClose);
+    cloudcb->setStyleSheet("background-color: rgba(0,0,0,0);");
+
     Cloud *cloud = new Cloud(this);
     cloud->set_icon("cloud");
-    cloud->move(10,10);
+    cloud->move(38,14);
     cloud->show();
     cloud->setAttribute(Qt::WA_DeleteOnClose);
     cloud->setStyleSheet("background-color: rgba(0,0,0,0);");
+
+    Cloud *cube = new Cloud(this);
+    cube->set_icon("cube");
+    cube->move(81,14);
+    cube->show();
+    cube->setAttribute(Qt::WA_DeleteOnClose);
+    cube->setStyleSheet("background-color: rgba(0,0,0,0);");
+
+    Cloud *sphere = new Cloud(this);
+    sphere->set_icon("sphere");
+    sphere->move(102,14);
+    sphere->show();
+    sphere->setAttribute(Qt::WA_DeleteOnClose);
+    sphere->setStyleSheet("background-color: rgba(0,0,0,0);");
+
     this->setStyleSheet("background-color: rgb(255,255,255)");
 }
 

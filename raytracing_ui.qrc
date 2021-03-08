@@ -3,5 +3,11 @@
         <file>cloud.png</file>
         <file>cloud.svg</file>
         <file>cloud_icon.svg</file>
+        <file>cube.svg</file>
+        <file>cube_icon.svg</file>
+        <file>sphere_icon.svg</file>
+        <file>sphere.svg</file>
+        <file>cumulonimbus.svg</file>
+        <file>cumulonimbus_icon.svg</file>
     </qresource>
 </RCC>
