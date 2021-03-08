@@ -10,13 +10,13 @@
 #include <sys/time.h>
 #include <limits>
 
-double get_wall_time(){
-    struct timeval time;
-    if (gettimeofday(&time,NULL)){
-        return 0;
-    }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
-}
+//double get_wall_time(){
+//    struct timeval time;
+//    if (gettimeofday(&time,NULL)){
+//        return 0;
+//    }
+//    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+//}
 std::random_device rd;
 //std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dist(0.0, 1.0);
@@ -160,7 +160,7 @@ void trace_ray(const float* tau, const float* ssa, const float g, const int* cld
                const float cloud_clear_frac, const float k_null,
                const int n_photon, int* sfc_dir, int* sfc_dif, const int nx)
 {
-    const int n_threads = 8;//omp_get_max_threads();
+    const int n_threads = 8 ;//omp_get_max_threads();
     const int photons_per_block = int(n_photon/n_threads);
     #pragma omp parallel for
     for (int ithread = 0; ithread < n_threads; ++ithread)

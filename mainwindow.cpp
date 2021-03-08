@@ -1,5 +1,7 @@
 #include <chrono>
-#include <Windows.h>
+#ifdef WIN_32
+include <Windows.h>
+#endif
 #include <cstdlib>
 #include <unistd.h>
 #include "mainwindow.h"
@@ -15,6 +17,16 @@
 #include <QMessageBox>
 #include <thread>
 #include <compute.h>
+#include <time.h>
+#include <sys/time.h>
+double get_wall_time(){
+    struct timeval time;
+    if (gettimeofday(&time,NULL)){
+        //  Handle error
+        return 0;
+    }
+    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -322,8 +334,12 @@ void MainWindow::compute_button()
     std::cout<<"XXXXXXX"<<std::endl;
 //trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
 //    std::thread run_raytracing(trace_ray,tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
+    double start = get_wall_time();
     trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
 //    run_raytracing.join();
+    double end = get_wall_time();
+    std::cout<<end-start<<std::endl;
+
     res_global.resize(w_out);
     res_diffuse.resize(w_out);
     res_direct.resize(w_out);

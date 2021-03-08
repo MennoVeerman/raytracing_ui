@@ -7,7 +7,6 @@
 Cloudmenu::Cloudmenu(QWidget *parent)
     : QFrame(parent)
 {
-    setMinimumSize(50,50);
     setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
     setAcceptDrops(true);
 
@@ -56,16 +55,18 @@ void Cloudmenu::dropEvent(QDropEvent *event)
 //! [1]
 void Cloudmenu::mousePressEvent(QMouseEvent *event)
 {
-    QLabel *child = static_cast<QLabel*>(childAt(event->position().toPoint()));
+    Cloud *child = static_cast<Cloud*>(childAt(event->position().toPoint()));
 
     if (!child)
         return;
 
-    QPixmap pixmap = child->pixmap(Qt::ReturnByValue);
 
+    QPixmap pixmap = child->pixmap(Qt::ReturnByValue);
+    QString name = child->name;
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    dataStream << pixmap << QPoint(event->position().toPoint() - child->pos());
+    dataStream << name << QPoint(666,999) << QPoint(666,999);
+//    dataStream << name << QPoint(event->position().toPoint() - child->pos());
 //! [1]
 
 //! [2]

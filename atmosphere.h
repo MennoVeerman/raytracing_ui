@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QPoint>
+#include <QPinchGesture>
 
 QT_BEGIN_NAMESPACE
 class QDragEnterEvent;
@@ -24,9 +25,12 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 private:
     QPoint last_click;
+    void pinchTriggered(QPinchGesture*);
 };
 //! [0]
 

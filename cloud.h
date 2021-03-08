@@ -12,7 +12,9 @@ public:
     void update_image(QString name);
 
     QString name;
-//private:
+    int width = -1;
+    int height = -1;
+
 
 };
 

@@ -45,6 +45,57 @@ void atmosphere::remove_all_clouds()
 
 }
 
+void atmosphere::keyPressEvent(QKeyEvent *event)
+{
+    std::cout<<event->key()<<std::endl;
+    switch (event->key())
+    {
+        case Qt::Key_Delete:
+        {
+            Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+            if (!child)
+                return;
+            child->close();
+            break;
+        }
+    }
+}
+
+void atmosphere::wheelEvent(QWheelEvent *event)
+{
+    const int spin = event->angleDelta().y();
+
+    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+    if (!child)
+        return;
+    const int width_cur = child->width;
+    const int height_cur = child->height;
+    const int x = child->pos().x();
+    const int y = child->pos().y();
+    if (spin > 0)
+    {
+        child->width = int(std::ceil(child->width * 1.1));
+        child->height = int(std::ceil(child->height * 1.1));
+        child->update_image(child->name);
+    }
+    else if (spin < 0)
+    {
+        child->width = int(std::ceil(child->width / 1.1));
+        child->height = int(std::ceil(child->height / 1.1));
+        child->update_image(child->name);
+    }
+    child->move(x-(child->width-width_cur)/2, y-(child->height-height_cur)/2);
+}
+
+void pinchTriggered(QPinchGesture *gesture)
+{
+    QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
+    if (changeFlags & QPinchGesture::ScaleFactorChanged)
+    {
+        std::cout<<gesture->totalScaleFactor()<<std::endl;
+    }
+}
+
 void atmosphere::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
@@ -73,6 +124,7 @@ void atmosphere::dragMoveEvent(QDragMoveEvent *event)
     }
 }
 
+
 void atmosphere::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
@@ -80,24 +132,32 @@ void atmosphere::dropEvent(QDropEvent *event)
         QByteArray itemData = event->mimeData()->data("application/x-dnditemdata");
         QDataStream dataStream(&itemData, QIODevice::ReadOnly);
 
-        QPixmap pixmap;
+        QString name;
         QPoint offset;
-        dataStream >> pixmap >> offset;
+        QPoint cur_size;
+        dataStream >> name >> offset >> cur_size;
 
         Cloud *newIcon = new Cloud(this);
-        std::cout<<newIcon->width()<<"  "<<newIcon->height()<<std::endl;
-        newIcon->update_image(QString("cloud"));
-       //
 
-        newIcon->move(event->position().toPoint() - offset);
+
+        if (offset == QPoint(666,999))
+        {
+            newIcon->update_image(name);
+            offset = QPoint(newIcon->pixmap().size().width()/2,newIcon->pixmap().size().height()/2);
+            newIcon->move(event->position().toPoint() - offset);
+        }
+        else
+        {
+            newIcon->width = cur_size.x();
+            newIcon->height = cur_size.y();
+            newIcon->update_image(name);
+            newIcon->move(event->position().toPoint() - offset);
+        }
         newIcon->show();
+
+
         newIcon->setAttribute(Qt::WA_DeleteOnClose);
         newIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
-
-//        dataStream >> pixmap >> offset;
-//        newIcon->setPixmap(pixmap.scaled(100,100,Qt::KeepAspectRatio));
-//        newIcon->move(event->position().toPoint() - offset);
-//        newIcon->show();
 
         if (event->source() == this) {
             event->setDropAction(Qt::MoveAction);
@@ -114,16 +174,16 @@ void atmosphere::dropEvent(QDropEvent *event)
 void atmosphere::mousePressEvent(QMouseEvent *event)
 {
     this->last_click = event->position().toPoint();
-    QLabel *child = static_cast<QLabel*>(childAt(this->last_click));
-    //std::cout<<event->position()<<std::endl;
+    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
     if (!child)
         return;
 
     QPixmap pixmap = child->pixmap(Qt::ReturnByValue);
-
+    QString name = child->name;
     QByteArray itemData;
     QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    dataStream << pixmap << QPoint(event->position().toPoint() - child->pos());
+    QPoint cur_size(child->width, child->height);
+    dataStream << name << QPoint(event->position().toPoint() - child->pos()) << cur_size;
 //! [1]
 
 //! [2]
@@ -151,5 +211,4 @@ void atmosphere::mousePressEvent(QMouseEvent *event)
         child->show();
         child->setPixmap(pixmap);
     }
-    //selected_cloud = child;
 }
