@@ -89,70 +89,7 @@ void MainWindow::move_button()
     std::cout<<ui->streams->pos().y()<<std::endl;
 }
 
-void MainWindow::streams(bool checked)
-{
-    if (checked)
-    {
-        QMessageBox *test = new QMessageBox(this);
-        test->setText("Are you sure?");
-        test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        test->setStyleSheet("QLabel{min-width: 100px;}");
-        int ret = test->exec();
-        switch (ret)
-        {
-            case QMessageBox::Yes:
-            streams2();
-            break;
-        }
-    }
-}
-void MainWindow::streams2()
-{
-    std::cout<<"---"<<std::endl;
-    ui->albedo->setValue(0.5);
-    //    QMessageBox *test = new QMessageBox(this);
-//    test->setText("Do you really want to use an n-stream solver?");
-//    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-//    test->setStyleSheet("QLabel{min-width: 300px;}");
-//    int ret = test->exec();
-//    switch (ret)
-//    {
-//        case QMessageBox::Yes:
-//        streams3();
-//        break;
-//    }
-}
-void MainWindow::streams3()
-{
-    QMessageBox *test = new QMessageBox(this);
-    test->setText("It's less accurate than ray tracing!");
-    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    test->button(QMessageBox::Yes)->setText("Good point");
-    test->button(QMessageBox::No)->setText("I don't care");
-    test->setStyleSheet("QLabel{min-width: 200px;}");
-    int ret = test->exec();
-    switch (ret)
-    {
-        case QMessageBox::No:
-        streams4();
-        break;
-    }
-}
-void MainWindow::streams4()
-{
-    QMessageBox *test = new QMessageBox(this);
-    test->setText("Are you a bot perhaps?");
-    test->setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::NoToAll);
-    test->button(QMessageBox::NoToAll)->setText("I'm a dolphin!");
-    test->setStyleSheet("QLabel{min-width: 120px;}");
-    int ret = test->exec();
-    switch (ret)
-    {
-        case QMessageBox::NoToAll:
-        streams(true);
-        break;
-    }
-}void MainWindow::rem_cloud_button()
+void MainWindow::rem_cloud_button()
 {
     ui->atm_frame->remove_cloud();
 }
@@ -273,7 +210,6 @@ void MainWindow::compute_clims()
 
 void MainWindow::compute_button()
 {
-    std::cout<<"XXXXXXX"<<std::endl;
     H=ui->atm_frame->size().height();
     W=ui->atm_frame->size().width();
     dhw = ui->inputres->value();
@@ -331,12 +267,9 @@ void MainWindow::compute_button()
     sfc_dif.resize(w_out);
     std::fill(sfc_dir.begin(), sfc_dir.end(), 0);
     std::fill(sfc_dif.begin(), sfc_dif.end(), 0);
-    std::cout<<"XXXXXXX"<<std::endl;
-//trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir, sfc_dif);
-//    std::thread run_raytracing(trace_ray,tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
+
     double start = get_wall_time();
     trace_ray(tau.data(), ssa.data(), g, cld_mask.data(), size.data(), albedo, sza_rad, cloud_clear_frac, k_null, n_photon, sfc_dir.data(), sfc_dif.data(), sfc_dif.size());
-//    run_raytracing.join();
     double end = get_wall_time();
     std::cout<<end-start<<std::endl;
 

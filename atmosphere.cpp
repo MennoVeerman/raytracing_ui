@@ -28,12 +28,14 @@ void atmosphere::add_cloud()
     cloud->setStyleSheet("background-color: rgba(0,0,0,0);");
 
 }
+
 void atmosphere::remove_cloud()
 {
     QLabel *child = static_cast<QLabel*>(childAt(this->last_click));
     if (!child)
         return;
-    child->close();//selected_cloud->close();
+    child->close();
+
 }
 
 void atmosphere::remove_all_clouds()
@@ -47,7 +49,6 @@ void atmosphere::remove_all_clouds()
 
 void atmosphere::keyPressEvent(QKeyEvent *event)
 {
-    std::cout<<event->key()<<std::endl;
     switch (event->key())
     {
         case Qt::Key_Delete:
@@ -64,7 +65,7 @@ void atmosphere::keyPressEvent(QKeyEvent *event)
 void atmosphere::wheelEvent(QWheelEvent *event)
 {
     const int spin = event->angleDelta().y();
-
+    std::cout<<"spin: "<<spin<<std::endl;
     Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
     if (!child)
         return;

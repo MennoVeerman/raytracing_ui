@@ -28,10 +28,6 @@ public slots:
     void compute_results();
     void compute_paint_results();
     void compute_clims();
-    void streams(bool);
-    void streams2();
-    void streams3();
-    void streams4();
     void move_button();
 //    void compute_main();
 
