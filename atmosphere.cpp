@@ -35,7 +35,7 @@ void atmosphere::add_cloud()
 
 void atmosphere::remove_cloud()
 {
-    QLabel *child = static_cast<QLabel*>(childAt(this->last_click));
+    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
     if (!child)
         return;
     child->close();
@@ -52,14 +52,17 @@ void atmosphere::remove_all_clouds()
 }
 void atmosphere::contextMenuEvent(QContextMenuEvent *event)
 {
+    this->last_click = event->pos();
+    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+    if (!child)
+        return;
+
     QMenu menu;
     menu.addAction(tr("Delete"));
     QAction*  selAct = menu.exec(event->globalPos());
 
     if (selAct!=0)
     {
-        this->last_click = event->pos();
-        std::cout<<this->last_click.x()<<" "<<this->last_click.y()<<std::endl;
         remove_cloud();
     }
     QWidget::contextMenuEvent(event);
