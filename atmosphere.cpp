@@ -1,4 +1,5 @@
 #include <QtWidgets>
+#include <QMenu>
 #include <iostream>
 #include "atmosphere.h"
 #include "cloud.h"
@@ -13,6 +14,9 @@ atmosphere::atmosphere(QWidget *parent)
 
     this->setStyleSheet("background-color: rgb(192,191,255)");
 
+//    this->setContextMenuPolicy(Qt::CustomContextMenu);
+//    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+//            this, SLOT(ShowContextMenu(const QPoint &)));
 }
 //! [0]
 //!
@@ -46,12 +50,34 @@ void atmosphere::remove_all_clouds()
         static_cast<QLabel*>(clouds[i])->close();
 
 }
+void atmosphere::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu;
+    menu.addAction(tr("Delete"));
+    QAction*  selAct = menu.exec(event->globalPos());
+
+    if (selAct!=0)
+    {
+        this->last_click = event->pos();
+        std::cout<<this->last_click.x()<<" "<<this->last_click.y()<<std::endl;
+        remove_cloud();
+    }
+    QWidget::contextMenuEvent(event);
+}
 
 void atmosphere::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key())
     {
         case Qt::Key_Delete:
+        {
+            Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+            if (!child)
+                return;
+            child->close();
+            break;
+        }
+    case Qt::Key_Backspace:
         {
             Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
             if (!child)
@@ -176,42 +202,45 @@ void atmosphere::dropEvent(QDropEvent *event)
 //! [1]
 void atmosphere::mousePressEvent(QMouseEvent *event)
 {
-    this->last_click = event->position().toPoint();
-    Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
-    if (!child)
-        return;
+    if (event->button() == Qt::LeftButton)
+    {
+        this->last_click = event->position().toPoint();
+        Cloud *child = static_cast<Cloud*>(childAt(this->last_click));
+        if (!child)
+            return;
 
-    QPixmap pixmap = child->pixmap(Qt::ReturnByValue);
-    QString name = child->name;
-    QByteArray itemData;
-    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-    QPoint cur_size(child->width, child->height);
-    dataStream << name << QPoint(event->position().toPoint() - child->pos()) << cur_size;
-//! [1]
+        QPixmap pixmap = child->pixmap(Qt::ReturnByValue);
+        QString name = child->name;
+        QByteArray itemData;
+        QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+        QPoint cur_size(child->width, child->height);
+        dataStream << name << QPoint(event->position().toPoint() - child->pos()) << cur_size;
+    //! [1]
 
-//! [2]
-    QMimeData *mimeData = new QMimeData;
-    mimeData->setData("application/x-dnditemdata", itemData);
-//! [2]
+    //! [2]
+        QMimeData *mimeData = new QMimeData;
+        mimeData->setData("application/x-dnditemdata", itemData);
+    //! [2]
 
-//! [3]
-    QDrag *drag = new QDrag(this);
-    drag->setMimeData(mimeData);
-    drag->setPixmap(pixmap);
-    drag->setHotSpot(event->position().toPoint() - child->pos());
-//! [3]
+    //! [3]
+        QDrag *drag = new QDrag(this);
+        drag->setMimeData(mimeData);
+        drag->setPixmap(pixmap);
+        drag->setHotSpot(event->position().toPoint() - child->pos());
+    //! [3]
 
-    QPixmap tempPixmap = pixmap;
-    QPainter painter;
-    painter.begin(&tempPixmap);
-    painter.fillRect(pixmap.rect(), QColor(127, 127, 127, 127));
-    painter.end();
+        QPixmap tempPixmap = pixmap;
+        QPainter painter;
+        painter.begin(&tempPixmap);
+        painter.fillRect(pixmap.rect(), QColor(127, 127, 127, 127));
+        painter.end();
 
-    child->setPixmap(tempPixmap);
-    if (drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::CopyAction) == Qt::MoveAction) {
-        child->close();
-    } else {
-        child->show();
-        child->setPixmap(pixmap);
+        child->setPixmap(tempPixmap);
+        if (drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::CopyAction) == Qt::MoveAction) {
+            child->close();
+        } else {
+            child->show();
+            child->setPixmap(pixmap);
+        }
     }
 }
